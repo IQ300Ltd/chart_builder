@@ -1,5 +1,7 @@
 var port, server, service, page, url, svgDrawer
 fs = require('fs');
+var system = require('system');
+var env = system.env;
 port = 9494;
 server = require('webserver').create();
 page = require('webpage').create();
@@ -35,6 +37,11 @@ service = server.listen(port, function (request, response) {
 		response.close();
 		return;
 	}
+	
+if(env.WORKING_DIRECTORY != undefined){
+    fs.changeWorkingDirectory(env.WORKING_DIRECTORY)
+}
+
 url = 'file:///' + fs.absolute('./'+drawerPayload.inFile);
 page.open(url, function (status) {
 	if(status=="success"){
