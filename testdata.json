@@ -1,11 +1,22 @@
 {
-"data":
-  {"columns":[
-    ["Создано задач", 67, 92, 30, 45, 60, 15, 3]
-  ],
-  "type": "area"}
-,
-"outFile":"chart.png",
-"inFile":"chart.html",
-"returnSvg":false
+  "options":{
+    "data":{
+      "columns": [
+        ["Иванов", 16],
+        ["Петров", 10],
+        ["Сидоров", 13],
+        ["Орлов", 9],
+        ["Краснов", 7],
+        ["Остальные", 23]
+      ],
+      "type": "pie"
+    },
+    "size":{
+      "width": 270,
+      "height": 270
+    }
+  },
+  "outFile":"chart.png",
+  "inFile":"chart.html",
+  "returnType":"image"
 }
