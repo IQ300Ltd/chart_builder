@@ -19,7 +19,6 @@ function waitFor(testFx, onReady, timeOutMillis) {
                     phantom.exit(1);
                 } else {
                     // Condition fulfilled (timeout and/or condition is 'true')
-                    console.log("'waitFor()' finished in " + (new Date().getTime() - start) + "ms.");
                     typeof(onReady) === "string" ? eval(onReady) : onReady(); //< Do what it's supposed to do once the condition is fulfilled
                     clearInterval(interval); //< Stop this interval
                 }
@@ -49,20 +48,30 @@ page.open(url, function (status) {
 				page.evaluate(function(data){
 					$("body").on("click", data, chartBuilder);
 					$("body").click();
-				}, drawerPayload.data);
+				}, drawerPayload.options);
         return page.evaluate(function() {
-          return window.chartRendered;
+            return window.chartRendered;
         });
     }, function() {
-    	pageChartSVG = page.evaluate(function() {
-    		return $("#chart").html()
-    	});
-		page.render(drawerPayload.outFile);
 		response.statusCode = 200;
-		if(drawerPayload.returnSvg)
-			response.write(pageChartSVG);
-		else
-			response.write(page.renderBase64('PNG'));
+        switch (drawerPayload.returnType) {
+            case "svg":
+                pageChartSVG = page.evaluate(function() {
+                    return $("#chart").html()
+                });
+                response.write(pageChartSVG);
+                break;
+            case "image":
+                page.render(drawerPayload.outFile);
+                response.write(true);
+                break;
+            case "base64":
+                response.write(page.renderBase64('PNG'));
+                break;
+            default:
+                response.write(page.renderBase64('PNG'));
+                break;
+        }
 		response.close();
 		return;
     });

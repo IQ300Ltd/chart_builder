@@ -10,7 +10,7 @@
 <script src="./bower_components/d3/d3.min.js" charset="utf-8"></script>
 <script src="./bower_components/c3/c3.min.js"></script>
 <body>
-<div id="chart" style='width: 600px'>
+<div id="chart" style='width: 100%; text-align: center;'>
 <svg class="chart"></svg>
 </div>
 </body>
@@ -22,22 +22,22 @@ function chartBuilder(e){
   }
   else{
     window.allreadyRendered = true;
-    var data = e.data;
-    window.chart = c3.generate({
-        bindto: '#chart',
-        data: data,
-        transition: {
-          duration: 0
-        },
-        interaction: {
-          enabled: false
-        },
-        onrendered: function() {
-          setTimeout(function(){
-            window.chartRendered = true;
-          }, 0)
-        }
-    });
+    var options = {
+      bindto: '#chart',
+      transition: {
+        duration: 0
+      },
+      interaction: {
+        enabled: false
+      },
+      onrendered: function() {
+        setTimeout(function(){
+          window.chartRendered = true;
+        }, 0)
+      }
+    };
+    $.extend(options, e.data);
+    window.chart = c3.generate(options);
   }
 }
 </script>
