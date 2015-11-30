@@ -1,0 +1,11 @@
+{
+"data":
+  {"columns":[
+    ["Создано задач", 67, 92, 30, 45, 60, 15, 3]
+  ],
+  "type": "area"}
+,
+"outFile":"chart.png",
+"inFile":"chart.html",
+"returnSvg":false
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href="./bower_components/c3/c3.css" rel="stylesheet" type="text/css">
+<style>
+#chart {
+  font: 10px sans-serif;
+}
+</style>
+<script src="./jquery-min.js"></script>
+<script src="./bower_components/d3/d3.min.js" charset="utf-8"></script>
+<script src="./bower_components/c3/c3.min.js"></script>
+<body>
+<div id="chart" style='width: 600px'>
+<svg class="chart"></svg>
+</div>
+</body>
+<script>
+window.chartRendered = false;
+function chartBuilder(e){
+  if(window.allreadyRendered){
+    return
+  }
+  else{
+    window.allreadyRendered = true;
+    var data = e.data;
+    window.chart = c3.generate({
+        bindto: '#chart',
+        data: data,
+        transition: {
+          duration: 0
+        },
+        interaction: {
+          enabled: false
+        },
+        onrendered: function() {
+          setTimeout(function(){
+            window.chartRendered = true;
+          }, 0)
+        }
+    });
+  }
+}
+</script>
