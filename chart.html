@@ -42,12 +42,15 @@ function chartBuilder(e){
         {
           'Всего задач': true,
           'Из них важных': function (v, id, i, j) {
-            console.log(options);
             var baseData = options.data.columns.filter(function(itemData) {
               return itemData[0] == 'Всего задач';
             });
-            var percent = 100 * v/baseData[0][i+1];
-            return v.toString() + ' (' + percent.toFixed(0) +'%)';
+            if v == 0 {
+              return 0
+            } else
+              var percent = 100 * v/baseData[0][i+1];
+              return v.toString() + ' (' + percent.toFixed(0) +'%)';
+            }
           }
         }
       }
