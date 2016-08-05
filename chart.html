@@ -46,8 +46,8 @@ function chartBuilder(e){
               return itemData[0] == 'Всего задач';
             });
             if v == 0 {
-              return 0
-            } else
+              return 0;
+            } else {
               var percent = 100 * v/baseData[0][i+1];
               return v.toString() + ' (' + percent.toFixed(0) +'%)';
             }
