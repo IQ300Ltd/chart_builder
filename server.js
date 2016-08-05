@@ -36,7 +36,7 @@ service = server.listen(port, function (request, response) {
 		response.close();
 		return;
 	}
-	
+
 if(env.WORKING_DIRECTORY != undefined){
     fs.changeWorkingDirectory(env.WORKING_DIRECTORY)
 }
