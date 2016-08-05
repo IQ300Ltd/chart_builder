@@ -45,7 +45,7 @@ function chartBuilder(e){
             var baseData = options.data.columns.filter(function(itemData) {
               return itemData[0] == 'Всего задач';
             });
-            if v == 0 {
+            if (v == 0) {
               return 0;
             } else {
               var percent = 100 * v/baseData[0][i+1];
