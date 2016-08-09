@@ -37,13 +37,26 @@ function chartBuilder(e){
       }
     };
     $.extend(options, e.data);
-    if ('overdue_tasks' == options.key || 'user_overdue_tasks' == options.key) {
+    if ('overdue_tasks' == options.key || 'user_overdue_tasks' == options.key || 'customer_overdue_tasks' == options.key || 'executor_overdue_tasks' == options.key) {
       options.data.labels = { format:
         {
           'Всего задач': true,
+          'Всего задач на исполнении': true,
+          'Всего задач на принятии': true,
           'Из них важных': function (v, id, i, j) {
             var baseData = options.data.columns.filter(function(itemData) {
               return itemData[0] == 'Всего задач';
+            });
+            if (v == 0) {
+              return 0;
+            } else {
+              var percent = 100 * v/baseData[0][i+1];
+              return v.toString() + ' (' + percent.toFixed(0) +'%)';
+            }
+          },
+          'Из них просрочено': function (v, id, i, j) {
+            var baseData = options.data.columns.filter(function(itemData) {
+              return (itemData[0] == 'Всего задач на исполнении' || itemData[0] == 'Всего задач на принятии');
             });
             if (v == 0) {
               return 0;
