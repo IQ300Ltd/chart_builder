@@ -14,7 +14,7 @@ svgDrawer = void 0;
 
 waitFor = function(testFx, onReady, timeOutMillis) {
   var condition, interval, maxtimeOutMillis, start;
-  maxtimeOutMillis = timeOutMillis ? timeOutMillis : 10000;
+  maxtimeOutMillis = timeOutMillis ? timeOutMillis : 5000;
   start = (new Date).getTime();
   condition = false;
   interval = setInterval((function() {
@@ -109,7 +109,7 @@ service = server.listen(port, function(request, response) {
     var address, pageWidth, pageHeight;
     page = require('webpage').create();
     page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36';
-    address = 'http://localhost:3000/pub/gantt_images/' + drawerPayload.token;
+    address = 'http://app.iq300.ru/pub/gantt_images/' + drawerPayload.token;
     page.customHeaders = {
       "Accept-Language": "ru-RU"
     };
@@ -118,11 +118,10 @@ service = server.listen(port, function(request, response) {
       }
       else {
         waitFor((function() {
-          time = (new Date).getTime();
           return page.evaluate(function() {
-            return window.ganttLoaded;
+            return window.ganttLoaded && $('.gantt_row').length > 0;
           });
-        }), function () {
+        }), (function () {
         setTimeout(function() {
           var bb = page.evaluate(function () {
             return document.getElementsByClassName('gantt_container')[0].getBoundingClientRect();
@@ -145,10 +144,16 @@ service = server.listen(port, function(request, response) {
             width: pageWidth - bb.left*2,
             height: pageHeight - bb.top
           };
-          response.write(page.renderBase64('PNG', 75));
+          saved = page.render('gantt_image.png', {format: 'png', quality: '75'});
+          if (saved) {
+           response.statusCode = 200;
+           response.write(true);
+          }
+          else
+            response.write(false);
           response.close();
-          }, 500);
-        });
+          }, 1000);
+        }), 110000);
       }
     });
   }
