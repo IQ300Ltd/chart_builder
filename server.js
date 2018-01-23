@@ -109,7 +109,7 @@ service = server.listen(port, function(request, response) {
     var address, pageWidth, pageHeight;
     page = require('webpage').create();
     page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36';
-    address = 'http://app.iq300.ru/pub/gantt_images/' + drawerPayload.token;
+    address = 'https://app.iq300.ru/pub/gantt_images/' + drawerPayload.token;
     page.customHeaders = {
       "Accept-Language": "ru-RU"
     };
@@ -119,7 +119,7 @@ service = server.listen(port, function(request, response) {
       else {
         waitFor((function() {
           return page.evaluate(function() {
-            return window.ganttLoaded && $('.gantt_row').length > 0;
+            return window.ganttLoaded && $('.gantt_row') && $('.gantt_row').length > 0;
           });
         }), (function () {
         setTimeout(function() {
@@ -146,8 +146,8 @@ service = server.listen(port, function(request, response) {
           };
           saved = page.render('gantt_image.png', {format: 'png', quality: '75'});
           if (saved) {
-           response.statusCode = 200;
-           response.write(true);
+            response.statusCode = 200;
+            response.write(true);
           }
           else
             response.write(false);
