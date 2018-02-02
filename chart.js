@@ -41,7 +41,7 @@ system = require('system');
 
 env = system.env;
 
-port = 9494;
+port = 9495;
 
 server = require('webserver').create();
 
@@ -62,52 +62,46 @@ service = server.listen(port, function(request, response) {
   if (env.WORKING_DIRECTORY !== void 0) {
     fs.changeWorkingDirectory(env.WORKING_DIRECTORY);
   }
-  var address, pageWidth, pageHeight;
+  url = 'file:///' + fs.absolute('./' + drawerPayload.inFile);
   page = require('webpage').create();
-  page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36';
-  address = 'https://app.iq300.ru/pub/gantt_images/' + drawerPayload.token;
-  page.customHeaders = {
-    "Accept-Language": "ru-RU"
-  };
-  page.open(address, function (status) {
+  page.open(url, function(status) {
     if (status === 'success') {
       waitFor((function() {
+        page.evaluate((function(data) {
+          $('body').on('click', data, chartBuilder);
+          $('body').click();
+        }), drawerPayload.options);
         return page.evaluate(function() {
-          return window.ganttLoaded && $('.gantt_row') && $('.gantt_row').length > 0;
+          return window.chartRendered;
         });
-      }), (function () {
-      setTimeout(function() {
-        var bb = page.evaluate(function () {
-          return document.getElementsByClassName('gantt_container')[0].getBoundingClientRect();
-        });
-        pageWidth = page.evaluate(function () {
-          var width = document.getElementsByClassName('gantt_task')[0].scrollWidth;
-          width += document.getElementsByClassName('gantt_grid')[0].offsetWidth;
-          return width;
-        });
-        pageWidth += bb.left*2;
-        pageHeight = page.evaluate(function () {
-          return document.getElementsByClassName('gantt_task_bg')[0].scrollHeight +
-             document.getElementsByClassName('gantt_task_scale')[0].scrollHeight + 1;
-        });
-        pageHeight += bb.top;
-        page.viewportSize = { width: pageWidth, height: pageHeight };
-        page.clipRect = {
-          top: bb.top,
-          left: bb.left,
-          width: pageWidth - bb.left*2,
-          height: pageHeight - bb.top
-        };
-        saved = page.render('gantt_image.png', {format: 'png', quality: '75'});
-        if (saved) {
-          response.statusCode = 200;
-          response.write(true);
+      }), function() {
+        var pageChartSVG;
+        response.statusCode = 200;
+        switch (drawerPayload.returnType) {
+          case 'svg':
+            pageChartSVG = page.evaluate(function() {
+              return $('#chart').html();
+            });
+            response.write(pageChartSVG);
+            break;
+          case 'image':
+            page.render(drawerPayload.outFile);
+            response.write(true);
+            break;
+          case 'base64':
+            response.write(page.renderBase64('PNG'));
+            break;
+          default:
+            response.write(page.renderBase64('PNG'));
+            break;
         }
-        else
-          response.write(false);
         response.close();
-        }, 1000);
-      }), 110000);
+      });
+    } else {
+      response.statusCode = 404;
+      response.write('Not Found' + url);
+      response.close();
+      return;
     }
   });
 });
